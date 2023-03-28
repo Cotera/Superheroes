@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,15 +21,15 @@ public class SuperheroService {
         super();
     }
 
-    public Superhero getOne(Long id) {
+    public Optional<Superhero> getOne(Long id) {
         SuperheroEntity superheroEntity = superheroRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Superhero not found"));
 
-        return new Superhero()
+        return Optional.of(new Superhero()
                 .withId(superheroEntity.getId())
                 .withName(superheroEntity.getName())
                 .withAbility(superheroEntity.getAbility())
-                .withUniverse(superheroEntity.getUniverse());
+                .withUniverse(superheroEntity.getUniverse()));
     }
 
     public List<Superhero> getAll() {

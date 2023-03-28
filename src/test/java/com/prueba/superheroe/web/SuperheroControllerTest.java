@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -38,11 +40,11 @@ class SuperheroControllerTest {
         Superhero givenSuperhero = new Superhero();
         givenSuperhero.setId(givenId);
         givenSuperhero.setName("Ironman");
-        givenSuperhero.setAbility("Genio, Millonario, Playboy, Filantropo");
+        givenSuperhero.setAbility("Armadura tecnologica chetadisima");
         givenSuperhero.setUniverse("Marvel");
-        when(superheroService.getOne(givenId)).thenReturn(givenSuperhero);
+        when(superheroService.getOne(givenId)).thenReturn(Optional.of(givenSuperhero));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/superheres/{id}", givenId))
+        mockMvc.perform(MockMvcRequestBuilders.get("/superheros/{id}", givenId))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(readFile("src/test/resources/json/getOneTest.json")));
     }
@@ -84,22 +86,44 @@ class SuperheroControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/superheros/search?name=" + givenSearch))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().json(readFile("src/test/resources/json/getOneTest.json")));
+                .andExpect(MockMvcResultMatchers.content().json(readFile("src/test/resources/json/getByNameTest.json")));
+    }
+
+    @Test
+    public void testCreateSuperhero() throws Exception {
+        Superhero superhero = new Superhero()
+                .withId(1L)
+                .withName("IronMan")
+                .withAbility("Armadura tecnologica chetadisima")
+                .withUniverse("Marvel");
+        when(superheroService.create(superhero)).thenReturn(superhero);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/superheros/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(readFile("src/test/resources/json/updateTest.json")))
+                .andExpect(status().isCreated());
     }
 
     @Test
     void update() throws Exception {
         Long givenId = 1L;
-        Superhero givenSuperhero = new Superhero();
-        givenSuperhero.setName("Ironman");
-        givenSuperhero.setAbility("Genio, Millonario, Playboy, Filantropo");
-        givenSuperhero.setUniverse("Marvel");
+        Superhero givenSuperhero = new Superhero()
+                .withName("IronMan")
+                .withAbility("Armadura tecnologica chetadisima");
 
-        doNothing().when(superheroService).update(givenId, givenSuperhero);
+        Superhero updatedSuperhero = new Superhero()
+                .withId(givenId)
+                .withName("IronMan")
+                .withAbility("Armadura tecnologica chetadisima")
+                .withUniverse("Marvel");
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/superheros/{id}", givenId))
+        when(superheroService.update(givenId, givenSuperhero)).thenReturn(updatedSuperhero);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/superheros/{id}", givenId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"IronMan\",\"ability\":\"Armadura tecnologica chetadisima\"}"))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().json(readFile("src/test/resources/json/getOneTest.json")));
+                .andExpect(MockMvcResultMatchers.content().json(readFile("src/test/resources/json/updateTest.json")));
 
         verify(superheroService).update(eq(givenId), eq(givenSuperhero));
     }
@@ -111,7 +135,7 @@ class SuperheroControllerTest {
         doNothing().when(superheroService).delete(givenId);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/superheros/{id}", givenId))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         verify(superheroService).delete(eq(givenId));
     }

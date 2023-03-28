@@ -44,13 +44,13 @@ public class SuperheroServiceTest {
         Superhero expectedSuperhero = buildSuperhero(givenId, givenName, givenAbility, givenUniverse);
 
         //When
-        Superhero actualResponse = tested.getOne(givenId);
+        Optional<Superhero> actualResponse = tested.getOne(givenId);
 
         //Then
-        assertEquals(expectedSuperhero.getId(), actualResponse.getId());
-        assertEquals(expectedSuperhero.getName(), actualResponse.getName());
-        assertEquals(expectedSuperhero.getAbility(), actualResponse.getAbility());
-        assertEquals(expectedSuperhero.getUniverse(), actualResponse.getUniverse());
+        assertEquals(expectedSuperhero.getId(), actualResponse.get().getId());
+        assertEquals(expectedSuperhero.getName(), actualResponse.get().getName());
+        assertEquals(expectedSuperhero.getAbility(), actualResponse.get().getAbility());
+        assertEquals(expectedSuperhero.getUniverse(), actualResponse.get().getUniverse());
     }
 
     @Test
