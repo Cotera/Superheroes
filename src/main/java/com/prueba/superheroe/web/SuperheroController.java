@@ -72,7 +72,7 @@ public class SuperheroController {
      * @param superhero Superheroe que se va a crear
      * @return Superheroe creado
      */
-    @CacheEvict
+    @CacheEvict(value = "superheroes")
     @PostMapping("/")
     public ResponseEntity<Superhero> createSuperhero(@RequestBody Superhero superhero) {
         LOG.info("Creating");
@@ -87,7 +87,7 @@ public class SuperheroController {
      * @param superhero Datos para actualizar el superheroe
      * @return Superheroe actualizado
      */
-    @CacheEvict
+    @CacheEvict(value = "superheroes")
     @PutMapping("/{id}")
     public ResponseEntity<Superhero> update(@PathVariable Long id, @RequestBody Superhero superhero) {
         LOG.info("Updating");
@@ -104,7 +104,7 @@ public class SuperheroController {
      *
      * @param id Id del superheroe a eliminar
      */
-    @CacheEvict
+    @CacheEvict(value = "superheroes")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         LOG.info("Deleting");

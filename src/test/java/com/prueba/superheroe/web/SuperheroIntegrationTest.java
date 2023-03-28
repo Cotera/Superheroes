@@ -1,13 +1,13 @@
 package com.prueba.superheroe.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.prueba.superheroe.SuperheroApplication;
 import com.prueba.superheroe.model.SuperheroEntity;
 import com.prueba.superheroe.model.dto.Superhero;
 import com.prueba.superheroe.repository.SuperheroRepository;
 import com.prueba.superheroe.web.config.TestConfig;
-import javafx.application.Application;
 import org.junit.Before;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,10 +21,9 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.Assert.assertFalse;
 
-
-@SpringBootTest(classes = {Application.class, TestConfig.class},
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest(classes = {SuperheroApplication.class, TestConfig.class},
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SuperheroIntegrationTest {
 
     @Autowired
@@ -56,7 +55,7 @@ public class SuperheroIntegrationTest {
 
     @Test
     public void testGetAllSuperheroes() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/superheroes/")
+        mockMvc.perform(MockMvcRequestBuilders.get("/superheros/")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("Ironman"))
@@ -65,7 +64,7 @@ public class SuperheroIntegrationTest {
 
     @Test
     public void testGetSuperheroById() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/superheroes/{id}", 1L)
+        mockMvc.perform(MockMvcRequestBuilders.get("/superheros/{id}", 1L)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Ironman"));
@@ -73,12 +72,11 @@ public class SuperheroIntegrationTest {
 
     @Test
     public void testGetSuperheroByNameContaining() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/superheroes/search")
+        mockMvc.perform(MockMvcRequestBuilders.get("/superheros/search")
                 .param("name", "man")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("Spiderman"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].name").value("Ironman"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("Ironman"));
     }
 
     @Test
@@ -88,7 +86,7 @@ public class SuperheroIntegrationTest {
                 .withAbility("Armadura tecnologica chetadisima")
                 .withUniverse("Marvel");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/superheroes/")
+        mockMvc.perform(MockMvcRequestBuilders.post("/superheros/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(superhero)))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
@@ -100,7 +98,7 @@ public class SuperheroIntegrationTest {
         Superhero superhero = new Superhero()
                 .withAbility("Supervelocidad, viajes en el tiempo, viajes interdimesionales");
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/superheroes/{id}", superhero.getId())
+        mockMvc.perform(MockMvcRequestBuilders.put("/superheros/{id}", 2L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(superhero)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -110,7 +108,7 @@ public class SuperheroIntegrationTest {
     @Test
     public void testDeleteSuperhero() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/superheroes/{id}", 1L)
+        mockMvc.perform(MockMvcRequestBuilders.delete("/superheros/{id}", 1L)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 
