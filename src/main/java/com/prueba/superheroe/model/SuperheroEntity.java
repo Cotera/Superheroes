@@ -9,18 +9,19 @@ import javax.persistence.Id;
 
 @Entity
 @Data
-public class SuperheroeEntity {
+public class SuperheroEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String nombre;
-    private String habilidad;
-    private String universo;
+    private String name;
+    private String ability;
+    private String universe;
 
-    public SuperheroeEntity() {
+    public SuperheroEntity() {
         super();
     }
+
 
 }
