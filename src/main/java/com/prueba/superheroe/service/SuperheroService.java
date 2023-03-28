@@ -1,5 +1,6 @@
 package com.prueba.superheroe.service;
 
+import com.prueba.superheroe.exception.NotFoundException;
 import com.prueba.superheroe.model.SuperheroEntity;
 import com.prueba.superheroe.model.dto.Superhero;
 import com.prueba.superheroe.repository.SuperheroRepository;
@@ -23,7 +24,7 @@ public class SuperheroService {
 
     public Optional<Superhero> getOne(Long id) {
         SuperheroEntity superheroEntity = superheroRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Superhero not found"));
+                .orElseThrow(() -> new NotFoundException("Superhero not found"));
 
         return Optional.of(new Superhero()
                 .withId(superheroEntity.getId())
@@ -71,7 +72,7 @@ public class SuperheroService {
 
     public Superhero update(Long id, Superhero superhero) {
         SuperheroEntity existingSuperhero = superheroRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Superhero not found"));
+                .orElseThrow(() -> new NotFoundException("Superhero not found"));
 
         String name = superhero.getName();
         if (Objects.nonNull(name)) {
