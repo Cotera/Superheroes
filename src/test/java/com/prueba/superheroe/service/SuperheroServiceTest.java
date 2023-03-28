@@ -3,11 +3,12 @@ package com.prueba.superheroe.service;
 import com.prueba.superheroe.model.SuperheroEntity;
 import com.prueba.superheroe.model.dto.Superhero;
 import com.prueba.superheroe.repository.SuperheroRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +16,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
+@SpringBootTest
 public class SuperheroServiceTest {
 
     @Mock
@@ -24,8 +25,13 @@ public class SuperheroServiceTest {
     @InjectMocks
     private SuperheroService tested;
 
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
     @Test
-    void getOne() {
+    public void getOne() {
         //Given
         long givenId = 1L;
         String givenName = "Ironman";
@@ -48,7 +54,7 @@ public class SuperheroServiceTest {
     }
 
     @Test
-    void getAll() {
+    public void getAll() {
         //Given
         SuperheroEntity givenSuper1 = buildSuperheroEntity(1L, "Ironman", "Genio, Millonario, Playboy, Filantropo", "Marvel");
         SuperheroEntity givenSuper2 = buildSuperheroEntity(1L, "Superman", "Fuerza,Velocidad,Rayos", "DC");
@@ -71,7 +77,7 @@ public class SuperheroServiceTest {
     }
 
     @Test
-    void filterByName() {
+    public void filterByName() {
         //Given
         String search = "iron";
 
@@ -96,14 +102,42 @@ public class SuperheroServiceTest {
     }
 
     @Test
-    void update() {
+    public void create() {
         //Given
         long givenId = 1L;
         String givenName = "Ironman";
         String givenAbility = "Genio, Millonario, Playboy, Filantropo";
         String givenUniverse = "Marvel";
+        SuperheroEntity givenEntity = buildSuperheroEntity(null, givenName, givenAbility, givenUniverse);
+        SuperheroEntity savedEntity = buildSuperheroEntity(givenId, givenName, givenAbility, givenUniverse);
 
+        when(superheroRepository.save(givenEntity)).thenReturn(savedEntity);
+
+        Superhero givenSuperhero = buildSuperhero(null, givenName, givenAbility, givenUniverse);
+
+        Superhero expectedSuperhero = buildSuperhero(givenId, givenName, givenAbility, givenUniverse);
+
+        //When
+        Superhero actualResponse = tested.create(givenSuperhero);
+
+        //Then
+        assertEquals(expectedSuperhero.getId(), actualResponse.getId());
+        assertEquals(expectedSuperhero.getName(), actualResponse.getName());
+        assertEquals(expectedSuperhero.getAbility(), actualResponse.getAbility());
+        assertEquals(expectedSuperhero.getUniverse(), actualResponse.getUniverse());
+    }
+
+    @Test
+    public void update() {
+        //Given
+        long givenId = 1L;
+        String givenName = "Ironman";
+        String givenAbility = "Genio, Millonario, Playboy, Filantropo";
+        String givenUniverse = "Marvel";
         SuperheroEntity givenEntity = buildSuperheroEntity(givenId, givenName, givenAbility, givenUniverse);
+
+        when(superheroRepository.findById(givenId)).thenReturn(Optional.of(givenEntity));
+
         when(superheroRepository.save(givenEntity)).thenReturn(givenEntity);
 
         Superhero givenSuperhero = buildSuperhero(null, givenName, givenAbility, givenUniverse);
@@ -121,7 +155,7 @@ public class SuperheroServiceTest {
     }
 
     @Test
-    void delete() {
+    public void delete() {
         //Given
         long givenId = 1L;
         doNothing().when(superheroRepository).deleteById(givenId);
