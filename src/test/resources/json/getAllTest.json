@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "name": "Ironman",
+    "ability": "Genio, Millonario, Playboy, Filantropo",
+    "universe": "Marvel"
+  },
+  {
+    "id": 2,
+    "name": "Spiderman",
+    "ability": "Fuerza, agilidad y telarañas",
+    "universe": "Marvel"
+  }
+]

@@ -53,7 +53,7 @@ public class SuperheroServiceTest {
         SuperheroEntity givenSuper1 = buildSuperheroEntity(1L, "Ironman", "Genio, Millonario, Playboy, Filantropo", "Marvel");
         SuperheroEntity givenSuper2 = buildSuperheroEntity(1L, "Superman", "Fuerza,Velocidad,Rayos", "DC");
 
-        List<SuperheroEntity> givenSuperheroes = List.of(givenSuper1,givenSuper2);
+        List<SuperheroEntity> givenSuperheroes = List.of(givenSuper1, givenSuper2);
         when(superheroRepository.findAll()).thenReturn(givenSuperheroes);
 
         Superhero expectedSuper1 = buildSuperhero(1L, "Ironman", "Genio, Millonario, Playboy, Filantropo", "Marvel");
@@ -132,10 +132,10 @@ public class SuperheroServiceTest {
         verifyNoMoreInteractions(superheroRepository);
     }
 
-    private SuperheroEntity buildSuperheroEntity (Long id,
-                                                  String name,
-                                                  String ability,
-                                                  String universe) {
+    private SuperheroEntity buildSuperheroEntity(Long id,
+                                                 String name,
+                                                 String ability,
+                                                 String universe) {
         SuperheroEntity entity = new SuperheroEntity();
         entity.setId(id);
         entity.setName(name);
@@ -144,10 +144,10 @@ public class SuperheroServiceTest {
         return entity;
     }
 
-    private Superhero buildSuperhero (Long id,
-                                      String name,
-                                      String ability,
-                                      String universe)  {
+    private Superhero buildSuperhero(Long id,
+                                     String name,
+                                     String ability,
+                                     String universe) {
         Superhero entity = new Superhero();
         entity.setId(id);
         entity.setName(name);

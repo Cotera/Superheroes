@@ -20,7 +20,7 @@ public class SuperheroEntity {
     private String universe;
 
     public SuperheroEntity() {
-        super();
+
     }
 
 

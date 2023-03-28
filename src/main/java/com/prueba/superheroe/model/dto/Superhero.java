@@ -11,8 +11,4 @@ public class Superhero {
     private String ability;
     private String universe;
 
-    public Superhero() {
-        super();
-    }
-
 }
