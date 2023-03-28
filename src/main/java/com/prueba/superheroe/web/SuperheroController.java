@@ -5,6 +5,8 @@ import com.prueba.superheroe.service.SuperheroService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -29,6 +31,7 @@ public class SuperheroController {
      * @param id Id a buscar
      * @return Superheroe encontrado o vacío
      */
+    @Cacheable(value = "superheroes")
     @GetMapping("/{id}")
     public ResponseEntity<Superhero> getOne(@PathVariable Long id) {
         LOG.info("Searching by Id");
@@ -41,6 +44,7 @@ public class SuperheroController {
      *
      * @return Lista de superheroes
      */
+    @Cacheable(value = "superheroes")
     @GetMapping
     public ResponseEntity<List<Superhero>> getAll() {
         LOG.info("Searching all");
@@ -54,6 +58,7 @@ public class SuperheroController {
      * @param search cadena a buscar
      * @return Lista de superheroes encontrados
      */
+    @Cacheable(value = "superheroes")
     @GetMapping(value = "/search", params = {"name"})
     public ResponseEntity<List<Superhero>> filterByName(@RequestParam("name") String search) {
         LOG.info("Search by String in name");
@@ -67,6 +72,7 @@ public class SuperheroController {
      * @param superhero Superheroe que se va a crear
      * @return Superheroe creado
      */
+    @CacheEvict
     @PostMapping("/")
     public ResponseEntity<Superhero> createSuperhero(@RequestBody Superhero superhero) {
         LOG.info("Creating");
@@ -81,6 +87,7 @@ public class SuperheroController {
      * @param superhero Datos para actualizar el superheroe
      * @return Superheroe actualizado
      */
+    @CacheEvict
     @PutMapping("/{id}")
     public ResponseEntity<Superhero> update(@PathVariable Long id, @RequestBody Superhero superhero) {
         LOG.info("Updating");
@@ -97,6 +104,7 @@ public class SuperheroController {
      *
      * @param id Id del superheroe a eliminar
      */
+    @CacheEvict
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         LOG.info("Deleting");
