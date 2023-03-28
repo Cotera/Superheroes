@@ -23,6 +23,12 @@ public class SuperheroController {
     @Autowired
     private SuperheroService superheroService;
 
+    /**
+     * Devuelve un superheroe que coincida con el Id dado
+     *
+     * @param id Id a buscar
+     * @return Superheroe encontrado o vacío
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Superhero> getOne(@PathVariable Long id) {
         LOG.info("Searching by Id");
@@ -30,6 +36,11 @@ public class SuperheroController {
         return superhero.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    /**
+     * Devuelve todos los superheroes de la base de datos
+     *
+     * @return Lista de superheroes
+     */
     @GetMapping
     public ResponseEntity<List<Superhero>> getAll() {
         LOG.info("Searching all");
@@ -37,6 +48,12 @@ public class SuperheroController {
         return ResponseEntity.ok(superheros);
     }
 
+    /**
+     * Devuelve la lista de superheroes que contenga una cadena en el nombre
+     *
+     * @param search cadena a buscar
+     * @return Lista de superheroes encontrados
+     */
     @GetMapping(value = "/search", params = {"name"})
     public ResponseEntity<List<Superhero>> filterByName(@RequestParam("name") String search) {
         LOG.info("Search by String in name");
@@ -44,6 +61,12 @@ public class SuperheroController {
         return ResponseEntity.ok(superheros);
     }
 
+    /**
+     * Crea un nuevo superheroe
+     *
+     * @param superhero Superheroe que se va a crear
+     * @return Superheroe creado
+     */
     @PostMapping("/")
     public ResponseEntity<Superhero> createSuperhero(@RequestBody Superhero superhero) {
         LOG.info("Creating");
@@ -51,6 +74,13 @@ public class SuperheroController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdSuperhero);
     }
 
+    /**
+     * Actualiza un superheroe. Si algun campo es null se mantiene el valor actual
+     *
+     * @param id Id del heroe a actualizar
+     * @param superhero Datos para actualizar el superheroe
+     * @return Superheroe actualizado
+     */
     @PutMapping("/{id}")
     public ResponseEntity<Superhero> update(@PathVariable Long id, @RequestBody Superhero superhero) {
         LOG.info("Updating");
@@ -62,6 +92,11 @@ public class SuperheroController {
         }
     }
 
+    /**
+     * Elimina un superheroe basado en su Id
+     *
+     * @param id Id del superheroe a eliminar
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         LOG.info("Deleting");
