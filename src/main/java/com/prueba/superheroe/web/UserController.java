@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +23,7 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody UserEntity user) {
@@ -41,7 +42,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @Secured("USER")
+    //@Secured("USER")
     public ResponseEntity<UserEntity> getUser(@PathVariable("id") Long id) {
         Optional<UserEntity> user = userRepository.findById(id);
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
