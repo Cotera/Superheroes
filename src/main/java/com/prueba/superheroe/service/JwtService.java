@@ -10,12 +10,16 @@ import org.springframework.stereotype.Service;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class JwtService {
     private static final int EXPIRATION_TIME = 1000 * 60 * 60;
     private static final String AUTHORITIES = "authorities";
     private final String SECRET_KEY;
+
+    private Set<String> expiredTokens = new HashSet<>();
 
     public JwtService() {
         SECRET_KEY = Base64.getEncoder().encodeToString("key".getBytes());
@@ -32,6 +36,11 @@ public class JwtService {
                 .compact();
     }
 
+    public void revokeToken(String token) {
+        // TODO mejorarlo cambiando fecha de caducidad del token
+        expiredTokens.add(token);
+    }
+
     public Boolean hasTokenExpired(String token) {
         return Jwts.parser()
                 .setSigningKey(SECRET_KEY)
@@ -43,8 +52,11 @@ public class JwtService {
 
     public Boolean validateToken(String token, UserDetails userDetails) {
         String username = extractUsername(token);
-        return (userDetails.getUsername().equals(username) && !hasTokenExpired(token));
+        return (userDetails.getUsername().equals(username) && !hasTokenExpired(token) && !isTokenRevoked(token));
+    }
 
+    public boolean isTokenRevoked(String token) {
+        return expiredTokens.contains(token);
     }
 
     public String extractUsername(String token) {

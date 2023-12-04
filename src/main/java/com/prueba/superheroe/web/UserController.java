@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -70,6 +71,14 @@ public class UserController {
         UserDetails userDetails = myUserDetailService.loadUserByUsername(authenticationRequest.getUsername());
         String token = jwtService.createToken(userDetails);
         return ResponseEntity.ok(new AuthenticationResponse(token));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> revokeToken(@RequestBody Map<String, String> requestBody) {
+        // TODO sacar token del propio header Authorization
+        String token = requestBody.get("token");
+        jwtService.revokeToken(token);
+        return ResponseEntity.ok("Token revoked successfully");
     }
 
     @GetMapping("/{id}")
