@@ -45,15 +45,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .headers().frameOptions().disable(); // Necesario para que funcione el iframe de la consola H2
     }
 
-    /*
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }*/
-    @Bean
+    }
+    /*@Bean
     public PasswordEncoder getPasswordEncoder() {
         return NoOpPasswordEncoder.getInstance();
-    }
+    }*/
 
     @Bean
     @Override
