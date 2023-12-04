@@ -1,10 +1,20 @@
 package com.prueba.superheroe.web;
 
+import com.prueba.superheroe.authentication.AuthenticationRequest;
+import com.prueba.superheroe.authentication.AuthenticationResponse;
 import com.prueba.superheroe.model.UserEntity;
 import com.prueba.superheroe.repository.UserRepository;
+import com.prueba.superheroe.service.JwtService;
+import com.prueba.superheroe.service.MyUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -25,6 +35,13 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private MyUserDetailService myUserDetailService;
+    @Autowired
+    private JwtService jwtService;
+
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody UserEntity user) {
         // Verificar si el usuario ya existe
@@ -41,8 +58,21 @@ public class UserController {
         return ResponseEntity.ok("Registro exitoso: " + createdUser.getId());
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<AuthenticationResponse> createToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
+        try {
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    authenticationRequest.getUsername(), authenticationRequest.getPassword());
+            authenticationManager.authenticate(authentication);
+        } catch (BadCredentialsException e) {
+            throw new Exception("Invalid username or password", e);
+        }
+        UserDetails userDetails = myUserDetailService.loadUserByUsername(authenticationRequest.getUsername());
+        String token = jwtService.createToken(userDetails);
+        return ResponseEntity.ok(new AuthenticationResponse(token));
+    }
+
     @GetMapping("/{id}")
-    //@Secured("USER")
     public ResponseEntity<UserEntity> getUser(@PathVariable("id") Long id) {
         Optional<UserEntity> user = userRepository.findById(id);
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
